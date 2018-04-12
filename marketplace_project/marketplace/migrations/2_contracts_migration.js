@@ -4,7 +4,6 @@ var ProductLib = artifacts.require("./ProductLib.sol");
 var CooperativeBuyLib = artifacts.require("./CooperativeBuyLib.sol");
 var TokenTransactionsLib = artifacts.require("./TokenTransactionsLib.sol");
 var Marketplace = artifacts.require("./Marketplace.sol");
-var TokenOracle = artifacts.require("./TokenOracle.sol");
 
 module.exports = function(deployer) {
 	deployer.deploy(Safemath);
