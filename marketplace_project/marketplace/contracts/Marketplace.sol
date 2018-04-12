@@ -340,13 +340,13 @@ contract Marketplace is Ownable {
 	* Reduces the quantity of the product. Emits purchase Event
 	*/
 	function buyWithToken(bytes32 _id, uint _quantity, string _tokenSymbol) public productExists(_id) {
-		ProductLib.Product storage product = products[_id];
-		checkQuantity(_quantity, product);
+	    ProductLib.Product storage product = products[_id];
+	    checkQuantity(_quantity, product);
 
-        bytes32 _transactionId = generateTranscationId(_id, _quantity, _tokenSymbol);
-        tokenTransactions[_transactionId] = TokenTransactionsLib.initTransaction(_transactionId, msg.sender, _id, _quantity, _tokenSymbol);
+	    bytes32 _transactionId = generateTranscationId(_id, _quantity, _tokenSymbol);
+	    tokenTransactions[_transactionId] = TokenTransactionsLib.initTransaction(_transactionId, msg.sender, _id, _quantity, _tokenSymbol);
 
-        RequestTokenData(_transactionId, _tokenSymbol);
+	    RequestTokenData(_transactionId, _tokenSymbol);
 	}
 
 	function callbackSuccess(bytes32 _transactionId, address _tokenAddress, uint _tokenPriceInWei)
@@ -356,20 +356,20 @@ contract Marketplace is Ownable {
 	    uint productPriceInWei = products[transaction.productId].getPrice(transaction.quantity);
 	    uint productPriceInTokens = productPriceInWei.div(_tokenPriceInWei);
 
-        IERC20Token token = IERC20Token(_tokenAddress);
-        //TODO Check for external calls errors
-        if (token.transferFrom(transaction.buyer, address(this), productPriceInTokens)) {
-            registerTokenPurchase(transaction, productPriceInTokens);
-        }
+	    IERC20Token token = IERC20Token(_tokenAddress);
+	    //TODO Check for external calls errors
+	    if (token.transferFrom(transaction.buyer, address(this), productPriceInTokens)) {
+	        registerTokenPurchase(transaction, productPriceInTokens);
+	    }
 	}
 
 	function registerTokenPurchase(TokenTransactionsLib.TokenTransaction storage _transaction, uint _productPriceInTokens) internal {
 	    ProductLib.Product storage product = products[_transaction.productId];
 
-        _transaction.markFinished();
+	    _transaction.markFinished();
 	    product.updateQuantity(product.quantity.sub(_transaction.quantity));
-    	ProductPurchasedWithToken(
-    	    _transaction.buyer, _transaction.productId, _transaction.quantity, _transaction.tokenSymbol, _productPriceInTokens);
+	    ProductPurchasedWithToken(
+	        _transaction.buyer, _transaction.productId, _transaction.quantity, _transaction.tokenSymbol, _productPriceInTokens);
 	}
 
 	function callbackFailure(bytes32 _transactionId) public onlyOwner transactionIsPending(_transactionId) {
